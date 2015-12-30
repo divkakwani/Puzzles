@@ -1,35 +1,35 @@
-# Subproblems:
-#   DP(i, j) = DP(i, k) - DP(k+1, j)
-# 
-#   
+
+l = [12, 10, 4, 3, 5]
 
 
-t = int(input())
-
-for case in range(t):
-    n, m = map(int, input().split())
-    nums = []
-    for i in range(n):  nums.append(int(input()))
-    
-    # create and initialize a dp table
-    dp = [ [ {} for j in range(n)] for i in range(n)]
-
-    for i in range(n):  dp[i][i][nums[i]] = None
-
-    for length in range(2, n+1):
-        for start in range(n-length+1):
-            for split in range(start+1, start+length):
-                # first half: [start, split); second half: [split, start+length)
-                for i in dp[start][split-1]:
-                    for j in dp[split][start+length-1]:
-                        dp[start][start+length-1][i-j] = (i, j, split)
+memo = {}
 
 
+def op_results(i, j):
+    # Only one element in the list
+    if j-i == 1:
+        return {l[i]: -1}
+    if (i, j) in memo:
+        return memo[(i, j)]
+    ans = dict([])
+    # Find the last subtraction
+    for split in range(i+1, j):
+        # l is split into l[i:split] and l[split:j]
+        lres = op_results(i, split)
+        rres = op_results(split, j)
+        # combine the result
+        for a in lres:
+            for b in rres:
+                ans[a-b] = (a, b, split)
 
-    def print_res(i, j, m):
-        if i != j:
-            print_res(i, dp[i][j][m][2]-1, dp[i][j][m][0])
-            print(dp[i][j][m][2]-1)
-            print_res(dp[i][j][m][2], j, dp[i][j][m][1])
+    memo[(i, j)] = ans
+    return ans
 
-    print_res(0, n-1, m)
+
+def obtain_seq(i, j, n):
+    seq = []
+
+    obtain_seq(i, memo[(i, j)][n][2], memo[(i, j)][n][0]) + obtain_seq(memo[(i, j)][n][2], j, memo[(i, j)][n][1]) +
+    [1]
+
+print (op_results(0, 5))

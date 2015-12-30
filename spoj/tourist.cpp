@@ -3,54 +3,84 @@
 
 using namespace std;
 
-/* Author: Divyanshu Kakwani */
-
-/** Boilerplate */
-
-// type aliases
-typedef long long ll;
-typedef pair<int, int> ii;
-typedef vector<ii> vii;
-typedef vector<int> vi;
-typedef vector< vector<int> > vvi;	// for unweighted graph
-typedef vector< vector< ii > > vvii;	// for weighted graph
-
-// Constants
-#define INF 1e9
-
-
-// Shorthands for frequently occuring code
-#define rep(i, a, b) 	for(int i = (a); i < (b); i++)
-#define inpN(a, n)	rep(i, 0, n) cin >> a[i]; 
-#define fill(a, v) 	(memset(a, v, sizeof a))
-#define in(a, b) 	((b).find(a) != (b).end())
-#define max(a, b)	((a) > (b) ? (a) : (b))
-#define min(a, b)	((a) < (b) ? (a) : (b))
-#define isInt(a)	int(a) == (a) ? true : false
-#define el		cout << endl;
-#define mp		make_pair
-
-// Debugging macros
-#define show(x)		cerr << #x << ": " << x << endl;
-
-// Miscellaneous
-#define nosync ios_base::sync_with_stdio(0);
-
-int solve(vector<string>& map) {
-
-	return max(solve(&map, i, j+1) 
-
-}
 
 int main() {
-	
-	int t;
-	cin >> t;
-	while(t--) {
-		int w, h;
-		vector<string> map(h);
-		inpN(map, h);
-		cout << solve(map
-	}
 
+    int t;
+    cin >> t;
+
+    while (t--) {
+
+        string grid[101];
+        int table[101][101];       
+        bool path[101][101];
+
+        int h, w;
+        cin >> w >> h;
+
+        for (int i = 0; i < h; i++) {
+            cin >> grid[i];
+        }
+
+        table[h-1][w-1] = (grid[h-1][w-1] == '*') ? 1 : 0;
+
+
+        // lower row
+        for (int j = w-2; j >= 0; j--) {
+            path[h-1][j] = 1;
+            if (table[h-1][j+1] == -1)
+                table[h-1][j] = -1;
+            else if (grid[h-1][j] == '#') {
+                table[h-1][j] == -1;
+            }
+            else {
+                table[h-1][j] = table[h-1][j+1];
+                if (grid[h-1][j] == '*')
+                    table[h-1][j] += 1;
+            }
+        }
+        for (int j = h-2; j >= 0; j--) {
+            path[j][w-1] = 0;
+            if (table[j+1][w-1] == -1)
+                table[j][w-1] = -1;
+            else if (grid[j][w-1] == '#') {
+                table[j][w-1] == -1;
+            }
+            else {
+                table[j][w-1] = table[j+1][w-1];
+                if (grid[j][w-1] == '*')
+                    table[j][w-1] += 1;
+            }
+        }
+            
+
+        for (int i = h-2; i >= 0; i--) {
+            for (int j = w-2; j >= 0; j--) {
+                if (grid[i][j] == '#')
+                    table[i][j] = -1;
+                else {
+                    int down = table[i+1][j];
+                    int right = table[i][j+1];
+                    if (right > down) {
+                        path[i][j] = 1;
+                        table[i][j] = right;
+                    } else {
+                        path[i][j] = 0;
+                        table[i][j] = down;
+                    }
+                    if (grid[i][j] == '*')
+                        table[i][j] += 1;
+                }
+            }
+        }
+
+        for(int i = 0; i < h; i++) {
+            for(int j = 0; j < w; j++)
+                cout << table[i][j] << " ";
+            cout << endl;
+        }
+
+        cout << table[0][0] << endl;
+    
+    }
 }
